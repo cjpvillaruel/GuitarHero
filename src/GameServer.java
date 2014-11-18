@@ -50,6 +50,7 @@ public class GameServer implements Runnable, Constants{
 	 * @param msg
 	 */
 	public void broadcast(String msg){
+		//System.out.print("broadcast");
 		for(Iterator ite=game.getPlayers().keySet().iterator();ite.hasNext();){
 			String name=(String)ite.next();
 			NetPlayer player=(NetPlayer)game.getPlayers().get(name);			
@@ -67,6 +68,7 @@ public class GameServer implements Runnable, Constants{
 		DatagramPacket packet;	
 		byte buf[] = msg.getBytes();		
 		packet = new DatagramPacket(buf, buf.length, player.getAddress(),player.getPort());
+		System.out.println(player.getPort());
 		try{
 			serverSocket.send(packet);
 		}catch(IOException ioe){
@@ -78,6 +80,7 @@ public class GameServer implements Runnable, Constants{
 		DatagramPacket packet;	
 		byte buf[] = msg.getBytes();		
 		packet = new DatagramPacket(buf, buf.length, address,port);
+		System.out.print(address+" "+port);
 		try{
 			serverSocket.send(packet);
 		}catch(IOException ioe){
@@ -117,7 +120,7 @@ public class GameServer implements Runnable, Constants{
 						if (playerData.startsWith("CONNECT")){
 							String tokens[] = playerData.split(" ");
 							NetPlayer player=new NetPlayer(packet.getAddress(),packet.getPort(),tokens[1]);
-							System.out.println("Player connected");
+							System.out.println("Player connected" +packet.getPort());
 							game.update(tokens[1].trim(),player);
 							broadcast("CONNECTED "+tokens[1]);
 							playerCount++;
@@ -129,11 +132,25 @@ public class GameServer implements Runnable, Constants{
 						else if(playerData.startsWith("MAIN")){
 							send(packet.getAddress(),packet.getPort(),playerCount+"" );
 						}
+						else if(playerData.startsWith("CHATCONNECT")){
+							String tokens[] = playerData.split(" ");
+								
+							//send(packet.getAddress(),packet.getPort(),"CHATNOTIF:"+tokens[1]+" connected.");
+							broadcast("CHATNOTIF:"+tokens[1]+" connected.");
+							System.out.println("chat connect");
+						}
 					  break;	
 				  case GAME_START:
 					  System.out.println("Game State: START");
-					  broadcast("START");
-					  gameStage=IN_PROGRESS;
+					 // broadcast("START");
+					  if(playerData.startsWith("CHATCONNECT")){
+							String tokens[] = playerData.split(" ");
+								
+							//send(packet.getAddress(),packet.getPort(),"CHATNOTIF:"+tokens[1]+" connected.");
+							broadcast("CHATNOTIF:"+tokens[1]+" connected.");
+							System.out.println("chat connect");
+						}
+					 // gameStage=IN_PROGRESS;
 					  break;
 				  case IN_PROGRESS:
 					  //System.out.println("Game State: IN_PROGRESS");

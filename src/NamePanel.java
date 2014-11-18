@@ -52,7 +52,7 @@ public class NamePanel extends JPanel implements ActionListener,Constants {
 			
 			send("CONNECT"+" "+name.getText());
 			try {
-				game= new GamePanel(this.panel1, name.getText(), port.getText());
+				game= new GamePanel(this.panel1, this.server,name.getText(), this.socket);
 			} catch (SocketException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

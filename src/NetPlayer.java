@@ -78,8 +78,7 @@ public class NetPlayer {
 	public String toString(){
 		String retval="";
 		retval+="PLAYER ";
-		retval+=name+" ";
-		retval+=message;
+		retval+=name;
 		return retval;
 	}
 }

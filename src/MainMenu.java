@@ -79,18 +79,7 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 			
 			
 		}
-		else if(e.getSource()== next){
-			System.out.print("next");
-			try {
-				game= new GamePanel(this.panel1, name.getText(), this.server);
-			} catch (SocketException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			panel1.add(game, "Game");
-			CardLayout cardLayout = (CardLayout)(panel1.getLayout());
-			cardLayout.show(panel1, "Game");	
-		}
+		
 
 	}
 	protected void paintComponent(Graphics g) {

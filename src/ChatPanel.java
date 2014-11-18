@@ -52,13 +52,23 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 		this.add(scrollingArea2);
 		this.add(sendButton);
 		send("CHATCONNECT "+name);
+		sendButton.addActionListener(this);
 	
 		t.start();
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		if(e.getSource() == sendButton){
+			System.out.println("send button");
+			if(chatField.getText().trim() != ""){
+				String str = "MESSAGE>"+name+":";
+				str += chatField.getText().trim();
+				send(str);
+				chatField.setText("");
+			}	
+		}
 
 	}
 
@@ -83,6 +93,10 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 	 			System.out.println(serverData);
 	 			if (serverData.startsWith("CHATNOTIF")){
 	 				String tokens[] = serverData.split(":");
+	 				this.chatbox.append(tokens[1]+"\n");
+	 			}
+	 			else if (serverData.startsWith("CHATMESSAGE")){
+	 				String tokens[] = serverData.split(">");
 	 				this.chatbox.append(tokens[1]+"\n");
 	 			}
 	 			

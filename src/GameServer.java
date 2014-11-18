@@ -139,6 +139,11 @@ public class GameServer implements Runnable, Constants{
 							broadcast("CHATNOTIF:"+tokens[1]+" connected.");
 							System.out.println("chat connect");
 						}
+						else if(playerData.startsWith("MESSAGE")){
+							String tokens[] = playerData.split(">");
+							broadcast("CHATMESSAGE>"+tokens[1]);
+							
+						}
 					  break;	
 				  case GAME_START:
 					  System.out.println("Game State: START");
@@ -149,6 +154,11 @@ public class GameServer implements Runnable, Constants{
 							//send(packet.getAddress(),packet.getPort(),"CHATNOTIF:"+tokens[1]+" connected.");
 							broadcast("CHATNOTIF:"+tokens[1]+" connected.");
 							System.out.println("chat connect");
+						}
+					  else if(playerData.startsWith("MESSAGE")){
+							String tokens[] = playerData.split(">");
+							broadcast("CHATMESSAGE>"+tokens[1]);
+							
 						}
 					 // gameStage=IN_PROGRESS;
 					  break;

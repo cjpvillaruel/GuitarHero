@@ -46,7 +46,6 @@ public class GuitarHeroGUI extends JFrame{
 		panel2.setSize(new Dimension(800,500));
 		
 		CardLayout layout = new CardLayout();
-
 		panel1.setLayout(layout); 
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout());

@@ -99,6 +99,9 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 	 				String tokens[] = serverData.split(">");
 	 				this.chatbox.append(tokens[1]+"\n");
 	 			}
+	 			else if (serverData.startsWith("PLAYERCOUNT")){
+	 				System.out.println("fail");
+	 			}
 	 			
 			}catch(Exception ioe){System.out.println("Error");}
 	

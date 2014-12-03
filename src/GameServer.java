@@ -141,8 +141,10 @@ public class GameServer implements Runnable, Constants{
 						}
 						else if(playerData.startsWith("MESSAGE")){
 							String tokens[] = playerData.split(">");
-							broadcast("CHATMESSAGE>"+tokens[1]);
-							
+							broadcast("CHATMESSAGE>"+tokens[1]);	
+						}
+						else if(playerData.startsWith("WAITING")){
+							broadcast("PLAYERCOUNT:"+numPlayers);	
 						}
 					  break;	
 				  case GAME_START:
@@ -158,7 +160,9 @@ public class GameServer implements Runnable, Constants{
 					  else if(playerData.startsWith("MESSAGE")){
 							String tokens[] = playerData.split(">");
 							broadcast("CHATMESSAGE>"+tokens[1]);
-							
+						}
+					  else if(playerData.startsWith("WAITING")){
+							broadcast("PLAYERCOUNT:"+numPlayers);	
 						}
 					 // gameStage=IN_PROGRESS;
 					  break;

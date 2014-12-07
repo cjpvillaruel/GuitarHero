@@ -21,8 +21,10 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 	int time;
 	int x= 0, y=0,width= 340, height=5;
 	Image pink, blue, violet, green;
+	boolean f1=false, f2=false, f3=false, f4=false;
 	ArrayList <Circle> circles;
-	public PlayerBoard(ArrayList<Circle> circles){
+	boolean isPlayer;
+	public PlayerBoard(ArrayList<Circle> circles, boolean isPlayer1){
 		this.circles = circles;
 		this.setBackground(Color.CYAN);
 		background = Toolkit.getDefaultToolkit().getImage( "images/playerboard.jpg" );
@@ -32,6 +34,7 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 		blue =  Toolkit.getDefaultToolkit().getImage( "images/blue.png" );
 		this.setDoubleBuffered( true );
 		 this.timer = new Timer( 5, this );
+		 this.isPlayer = isPlayer1;
 	
 		 
 		// System.out.println(circles.size());
@@ -41,11 +44,14 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 	}
 	
 	public void startGame(){
-		this.setFocusable(true);
-		this.requestFocusInWindow();
+		
 		timer.start();
 		// Extending KeyAdapter allows to override only the methods of interest
-        this.addKeyListener( new TAdapter() );
+		if(isPlayer){
+			this.setFocusable(true);
+			this.requestFocusInWindow();
+	        this.addKeyListener( new TAdapter() );
+		}
 	}
 	public void drawCenteredCircle(Graphics2D g, int x, int y, int r1,int r2) {
 		  x = x-(r1/2);
@@ -72,10 +78,13 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 			 }
 		 }
 		
-		
+		 if(f1)
 		 g.drawImage(green, 10, 275, this);
+		 if(f2)
 		 g.drawImage(pink, 95, 275, this);
+		 if(f3)
 		 g.drawImage(blue, 167, 275, this);
+		 if(f4)
 		 g.drawImage(violet, 250, 275, this);
 		Toolkit.getDefaultToolkit().sync();
 		g.dispose();
@@ -94,11 +103,36 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased( KeyEvent event ) {
-            System.out.print("release");
+        	 int key = event.getKeyCode();
+        	 if(key == KeyEvent.VK_F1){
+        		 	f1= false;
+        	 }
+        	 else if(key == KeyEvent.VK_F2){
+      		 	f2= false;
+         	 }
+         	 else if(key == KeyEvent.VK_F3){
+      		 	f3= false;
+         	 }
+         	 if(key == KeyEvent.VK_F4){
+       		 	f4= false;
+          	 }
         }
 
         public void keyPressed( KeyEvent event ) {
-           System.out.print("press");
+        	 int key = event.getKeyCode();
+        	 System.out.print("pressed");
+        	 if(key == KeyEvent.VK_F1){
+     		 	f1= true;
+        	 }
+        	 else if(key == KeyEvent.VK_F2){
+     		 	f2= true;
+        	 }
+        	 else if(key == KeyEvent.VK_F3){
+     		 	f3= true;
+        	 }
+        	 if(key == KeyEvent.VK_F4){
+      		 	f4= true;
+         	 }
         }
 
     }

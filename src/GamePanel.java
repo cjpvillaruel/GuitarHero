@@ -135,7 +135,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				chatPanel.chatbox.append(tokens[1]+"\n");
 	 			}
 	 			else if (serverData.startsWith("READY")){
-	 				playerBoard2= new PlayerBoard(circles);
+	 				playerBoard2= new PlayerBoard(circles, false);
 	 				cardLayoutPanel2.add(playerBoard2,"board2");
 	 				//show playerboard2
 	 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel2.getLayout());
@@ -163,7 +163,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 			
 	 				if(tokens[1].equals(this.name)){
 	 					
-		 				playerBoard1= new PlayerBoard(circles);
+		 				playerBoard1= new PlayerBoard(circles, true);
 		 				cardLayoutPanel1.add(playerBoard1,"board1");
 		 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel1.getLayout());
 		 				cardLayout.show(cardLayoutPanel1, "board1");

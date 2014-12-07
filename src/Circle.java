@@ -5,7 +5,9 @@ public class Circle {
 	public int x, y, width, height;
 	boolean isVisible;
 	Color color;
+	int colornum;
 	public Circle(int colorstr){
+		this.colornum = colorstr;
 		switch(colorstr){
 			case 0: color= new Color(9, 101, 254); //blue
 					x  = 190;

@@ -5,6 +5,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,22 +20,33 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 	private Timer timer;
 	int time;
 	int x= 0, y=0,width= 340, height=5;
+	Image pink, blue, violet, green;
 	ArrayList <Circle> circles;
 	public PlayerBoard(ArrayList<Circle> circles){
 		this.circles = circles;
 		this.setBackground(Color.CYAN);
 		background = Toolkit.getDefaultToolkit().getImage( "images/playerboard.jpg" );
+		pink =  Toolkit.getDefaultToolkit().getImage( "images/pink.png" );
+		green =  Toolkit.getDefaultToolkit().getImage( "images/green.png" );
+		violet =  Toolkit.getDefaultToolkit().getImage( "images/violet.png" );
+		blue =  Toolkit.getDefaultToolkit().getImage( "images/blue.png" );
 		this.setDoubleBuffered( true );
 		 this.timer = new Timer( 5, this );
 	
 		 
 		// System.out.println(circles.size());
 		 time=0;
-		timer.start();
-		
-		
+		//timer.start();
+
 	}
 	
+	public void startGame(){
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		timer.start();
+		// Extending KeyAdapter allows to override only the methods of interest
+        this.addKeyListener( new TAdapter() );
+	}
 	public void drawCenteredCircle(Graphics2D g, int x, int y, int r1,int r2) {
 		  x = x-(r1/2);
 		  y = y-(r1/2);
@@ -57,6 +71,12 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 				 g.fillOval(circle.x,circle.y,circle.width,circle.height);
 			 }
 		 }
+		
+		
+		 g.drawImage(green, 10, 275, this);
+		 g.drawImage(pink, 95, 275, this);
+		 g.drawImage(blue, 167, 275, this);
+		 g.drawImage(violet, 250, 275, this);
 		Toolkit.getDefaultToolkit().sync();
 		g.dispose();
 
@@ -71,4 +91,16 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
         repaint();
 
     }
+    private class TAdapter extends KeyAdapter {
+
+        public void keyReleased( KeyEvent event ) {
+            System.out.print("release");
+        }
+
+        public void keyPressed( KeyEvent event ) {
+           System.out.print("press");
+        }
+
+    }
+
 }

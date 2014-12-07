@@ -32,7 +32,7 @@ public class GuitarHeroGUI extends JFrame{
 		this.setResizable(false);
 		this.setVisible(true); 
 		this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-		this.server = "192.168.43.218";
+		this.server = "192.168.242.1";
 		//
 	}
 	private void addComponents(){

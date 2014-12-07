@@ -6,6 +6,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -24,7 +26,7 @@ import javax.swing.JTextField;
 import static javax.swing.ScrollPaneConstants.*;
 
 
-public class GamePanel extends JPanel implements ActionListener , Runnable, Constants{
+public class GamePanel extends JPanel implements ActionListener , Runnable, Constants, KeyListener{
 	public JPanel panel1;
 	Image background;
 	ChatPanel chatPanel;
@@ -34,9 +36,12 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	JLabel status;
 	String server;
 	DatagramSocket socket;
+	String name;
 	ArrayList <Circle> circles;
 	JButton button, button2;
 	String serverData;
+	JPanel cardLayoutPanel1;
+	JPanel cardLayoutPanel2;
 	boolean waiting= true;
 	Thread t=new Thread(this);
 	public GamePanel(JPanel panel1, String server, String name, DatagramSocket socket) throws SocketException{
@@ -45,6 +50,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		this.setLayout(null);
 		this.player1 = name;
 		this.socket= socket;
+		this.name = name;
 		try {
 			chatPanel = new ChatPanel(this);
 		} catch (Exception e) {
@@ -52,12 +58,17 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 			e.printStackTrace();
 		}
 		 circles = new ArrayList<Circle>();
-		 initializeCircles();
+		
 		CardLayout layout = new CardLayout();
 		board1 = new JPanel(layout);
 		board2 = new JPanel(layout);
+		
+		cardLayoutPanel1 = new JPanel(new CardLayout());
+		cardLayoutPanel2 = new JPanel(new CardLayout());
+		
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		JPanel buttonPanel2 = new JPanel(new FlowLayout());
+		
 		button = new JButton("Ready");
 		button.setEnabled(false);
 		button2 = new JButton("Ready");
@@ -66,15 +77,21 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		buttonPanel2.add(button2);
 		button.addActionListener(this);
 		button2.addActionListener(this);
+		
 		board1.add("button", buttonPanel);
 		board2.add("button", buttonPanel2);
 		
-		playerBoard1= new PlayerBoard(circles);
-		playerBoard2= new PlayerBoard(circles);
-		playerBoard1.setBounds(186,150, 335, 394);
-		playerBoard2.setBounds(535,150, 335, 394);
-		this.add(playerBoard1);
-		this.add(playerBoard2);
+		cardLayoutPanel1.add(buttonPanel, "Player1");
+		cardLayoutPanel2.add(buttonPanel2, "Player2");
+		
+		
+		
+		
+		
+		cardLayoutPanel1.setBounds(186,150, 335, 394);
+		cardLayoutPanel2.setBounds(535,150, 335, 394);
+		this.add(cardLayoutPanel1);
+		this.add(cardLayoutPanel2);
 		status = new JLabel("Status:");
 		
 		this.add(chatPanel);
@@ -89,36 +106,73 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if( e.getSource() == button){
-			System.out.println("hehe");
+			send("READY "+ this.name);
 		}
 	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-				while(true){
-					try{
-						Thread.sleep(1);
-					}catch(Exception ioe){}
-								
-					//Get the data from players
-					byte[] buf = new byte[256];
-					DatagramPacket packet = new DatagramPacket(buf, buf.length);
-					
-					System.out.println("receive");
-					
-		
-		
-				try{
-		 			socket.receive(packet);
-		 			serverData=new String(buf);
-		 			serverData=serverData.trim();
-		 				
-		 			System.out.println(serverData);
-		
-		 			
-				}catch(Exception ioe){System.out.println("Error");}	
-
-				}
+		while(true){
+			try{
+				Thread.sleep(1);
+			}catch(Exception ioe){}
+						
+			//Get the data from players
+			byte[] buf = new byte[256];
+			DatagramPacket packet = new DatagramPacket(buf, buf.length);
+			
+			
+			try{
+	 			socket.receive(packet);
+	 			serverData=new String(buf);
+	 			serverData=serverData.trim();
+	 				
+	 			if (serverData.startsWith("CHATNOTIF")){
+	 				String tokens[] = serverData.split(":");
+	 				chatPanel.chatbox.append(tokens[1]+"\n");
+	 			}
+	 			else if (serverData.startsWith("CHATMESSAGE")){
+	 				String tokens[] = serverData.split(">");
+	 				chatPanel.chatbox.append(tokens[1]+"\n");
+	 			}
+	 			else if (serverData.startsWith("READY")){
+	 				playerBoard2= new PlayerBoard(circles);
+	 				cardLayoutPanel2.add(playerBoard2,"board2");
+	 				//show playerboard2
+	 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel2.getLayout());
+	 				cardLayout.show(cardLayoutPanel2, "board2");
+	 				//start game
+	 				playerBoard1.startGame();
+	 				playerBoard2.startGame();
+	 			}
+	 			else if(serverData.startsWith("COMPLETE")){
+	 				button.setEnabled(true);
+	 				button2.setEnabled(true);
+	 				
+	 			}
+	 			else if(serverData.startsWith("CIRCLES")){
+	 				String tokens[] = serverData.split(" "); //SPLIT BY SPACES
+	 				circles = new ArrayList<Circle>();
+	 				
+	 				System.out.print("circle");
+	 				for(int i =2 ;i< tokens.length; i++){
+	 					String token[] = tokens[i].split(",");
+	 					Circle cir= new Circle(Integer.parseInt(token[0]));
+	 					cir.y = Integer.parseInt(token[1]);
+	 					circles.add(cir);
+	 				}
+	 			
+	 				if(tokens[1].equals(this.name)){
+	 					
+		 				playerBoard1= new PlayerBoard(circles);
+		 				cardLayoutPanel1.add(playerBoard1,"board1");
+		 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel1.getLayout());
+		 				cardLayout.show(cardLayoutPanel1, "board1");
+	 				}
+	 				
+	 				
+	 			}
+			}catch(Exception ioe){System.out.println("Error");}			
+		}
 	
 	}
 
@@ -126,39 +180,8 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		super.paintComponent(g);
 		g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
 	}
-	public void initializeCircles(){
-		  Random randomGenerator = new Random();
-		  int[] gaps = {90, 100, 150,200, 400};
-		  int gap = randomGenerator.nextInt(5);
-		  int num =0;
-		  Circle circle;
-		  int color, color2;
-		  int count=0;
-		  while(num >= -5000){
-			  color = randomGenerator.nextInt(4);
-			  circle = new Circle(color);
-			  circle.y = num;
-			  circles.add(circle);
-			  gap = randomGenerator.nextInt(5);
-			  count++;
-			  //randomize another circle
-			  int addMore = randomGenerator.nextInt(1);
-			  if(addMore == 1){
-				  do{
-					  color2 = randomGenerator.nextInt(4);
-				  }while(color2 == color);
-				  
-				  circle = new Circle(color2);
-				  circle.y = num;
-				  circles.add(circle);
-				  count++;
-			  }
-			  
-			  num-= gaps[gap];
-		  }
-		 // System.out.println(count);
-		  
-	}
+	
+	
 	public void send(String msg){
 		try{
 			byte[] buf = msg.getBytes();
@@ -166,6 +189,21 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
         	DatagramPacket packet = new DatagramPacket(buf, buf.length, address, PORT);
         	socket.send(packet);
         }catch(Exception e){}
+		
+	}
+	public void keyTyped(KeyEvent e) {
+    	System.out.print("typed");
+       
+    }
+
+    /** Handle the key-pressed event from the text field. */
+    public void keyPressed(KeyEvent e) {
+    	System.out.print("typed");
+        
+    }
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 

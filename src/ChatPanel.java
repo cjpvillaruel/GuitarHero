@@ -54,7 +54,7 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 		send("CHATCONNECT "+name);
 		sendButton.addActionListener(this);
 	
-		t.start();
+		//t.start();
 	}
 	
 	@Override
@@ -103,9 +103,7 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 	 				System.out.println("fail");
 	 			}
 	 			
-			}catch(Exception ioe){System.out.println("Error");}
-	
-			
+			}catch(Exception ioe){System.out.println("Error");}			
 		}
 
 	}

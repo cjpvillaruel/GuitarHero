@@ -1,8 +1,10 @@
 
+import java.awt.List;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,7 +28,7 @@ public class GameServer implements Runnable, Constants{
 	int gameStage=WAITING_FOR_PLAYERS;
 	int numPlayers;
 	Thread t = new Thread(this);
-
+	int count;
 	public GameServer(){
 		this.numPlayers = 2;
 		try {
@@ -92,8 +94,9 @@ public class GameServer implements Runnable, Constants{
 	 * The juicy part
 	 */
 	public void run(){
+		
 		while(true){
-						
+			
 			// Get the data from players
 			byte[] buf = new byte[256];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -111,7 +114,7 @@ public class GameServer implements Runnable, Constants{
 			//if (!playerData.equals("")){
 			//	System.out.println("Player Data:"+playerData);
 			//}
-			System.out.print(playerData);
+			
 		
 			// process
 			switch(gameStage){
@@ -126,6 +129,7 @@ public class GameServer implements Runnable, Constants{
 							playerCount++;
 							if (playerCount==numPlayers){
 								gameStage=GAME_START;
+								broadcast("COMPLETE");
 							}
 						}
 						
@@ -137,6 +141,7 @@ public class GameServer implements Runnable, Constants{
 								
 							//send(packet.getAddress(),packet.getPort(),"CHATNOTIF:"+tokens[1]+" connected.");
 							broadcast("CHATNOTIF:"+tokens[1]+" connected.");
+							
 							System.out.println("chat connect");
 						}
 						else if(playerData.startsWith("MESSAGE")){
@@ -148,8 +153,8 @@ public class GameServer implements Runnable, Constants{
 						}
 					  break;	
 				  case GAME_START:
-					  System.out.println("Game State: START");
-					 // broadcast("START");
+					  
+					  broadcast("START");
 					  if(playerData.startsWith("CHATCONNECT")){
 							String tokens[] = playerData.split(" ");
 								
@@ -164,7 +169,19 @@ public class GameServer implements Runnable, Constants{
 					  else if(playerData.startsWith("WAITING")){
 							broadcast("PLAYERCOUNT:"+numPlayers);	
 						}
-					 // gameStage=IN_PROGRESS;
+					  else if(playerData.startsWith("READY")){
+						  	String tokens[] = playerData.split(" ");
+							broadcast("PLAYERCOUNT:"+numPlayers);
+							//CIRCLE NAME 1,2 3,4 
+							broadcast("CIRCLES " +tokens[1]+ game.circlestoString()); 
+							count++;
+							if(count ==2){
+								broadcast("READY");
+								gameStage=IN_PROGRESS;
+							}
+					   }
+					 
+					
 					  break;
 				  case IN_PROGRESS:
 					  //System.out.println("Game State: IN_PROGRESS");

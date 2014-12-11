@@ -26,7 +26,5 @@ public class Circle {
 		height = 30;
 		width = 50;
 	}
-	public void move(){
-		this.y++;
-	}
+	
 }

@@ -1,6 +1,8 @@
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -28,22 +30,25 @@ import static javax.swing.ScrollPaneConstants.*;
 
 public class GamePanel extends JPanel implements ActionListener , Runnable, Constants, KeyListener{
 	public JPanel panel1;
-	Image background;
-	ChatPanel chatPanel;
-	PlayerBoard playerBoard1, playerBoard2;
-	JPanel board1, board2;
-	String player1;
-	JLabel status;
-	String server;
-	DatagramSocket socket;
-	String name;
-	ArrayList <Circle> circles;
-	JButton button, button2;
-	String serverData;
-	JPanel cardLayoutPanel1;
-	JPanel cardLayoutPanel2;
+	public Image background;
+	public ChatPanel chatPanel;
+	public PlayerBoard playerBoard1, playerBoard2;
+	public JPanel board1, board2;
+	public String player1;
+	public JLabel status;
+	public JLabel playername1, playername2;
+	public String server;
+	public DatagramSocket socket;
+	public String name;
+	public ArrayList <Circle> circles;
+	public JButton button, button2;
+	public String serverData;
+	public JPanel cardLayoutPanel1;
+	public JPanel cardLayoutPanel2;
 	boolean waiting= true;
+	int score1=0, score2=0;
 	Thread t=new Thread(this);
+	boolean endGame= true;
 	public GamePanel(JPanel panel1, String server, String name, DatagramSocket socket) throws SocketException{
 		this.server = server;
 		this.panel1 = panel1;
@@ -51,6 +56,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		this.player1 = name;
 		this.socket= socket;
 		this.name = name;
+		
 		try {
 			chatPanel = new ChatPanel(this);
 		} catch (Exception e) {
@@ -84,10 +90,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		cardLayoutPanel1.add(buttonPanel, "Player1");
 		cardLayoutPanel2.add(buttonPanel2, "Player2");
 		
-		
-		
-		
-		
+				
 		cardLayoutPanel1.setBounds(186,150, 335, 394);
 		cardLayoutPanel2.setBounds(535,150, 335, 394);
 		this.add(cardLayoutPanel1);
@@ -97,10 +100,24 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		this.add(chatPanel);
 		t.start();
 		
+		this.playername1 = new JLabel(this.name+": "+ score1);
+		
+		this.playername1.setBounds(300, 40, 400, 100);
+		this.playername2 = new JLabel("Waiting...");
+		this.playername2.setBounds(650,40, 400, 100);
+		this.playername1.setFont(new Font("SansSerif", Font.BOLD, 40));
+		this.playername1.setForeground(Color.WHITE);
+		this.playername2.setFont(new Font("SansSerif", Font.BOLD, 30));
+		this.playername2.setForeground(Color.white);
+		this.add(playername1);
+		this.add(playername2);
 		
 		
 		//this.add(status);
 		background = Toolkit.getDefaultToolkit().getImage( "images/gameLayout.jpg" );
+	}
+	public void sendWinner(){
+		send("PLAYERSCORE "+name+" "+score1);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -112,6 +129,8 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	@Override
 	public void run() {
 		while(true){
+			
+			
 			try{
 				Thread.sleep(1);
 			}catch(Exception ioe){}
@@ -135,7 +154,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				chatPanel.chatbox.append(tokens[1]+"\n");
 	 			}
 	 			else if (serverData.startsWith("READY")){
-	 				playerBoard2= new PlayerBoard(circles, false);
+	 				playerBoard2= new PlayerBoard(circles, false, this);
 	 				cardLayoutPanel2.add(playerBoard2,"board2");
 	 				//show playerboard2
 	 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel2.getLayout());
@@ -143,15 +162,31 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				//start game
 	 				playerBoard1.startGame();
 	 				playerBoard2.startGame();
+	 				
+	 				
+	 				
 	 			}
 	 			else if(serverData.startsWith("COMPLETE")){
 	 				button.setEnabled(true);
-	 				button2.setEnabled(true);
+	 				//button2.setEnabled(true);
+	 				String tokens[] = serverData.split(" ");
+	 				
+	 				System.out.print(tokens[1]);
+	 				
+	 				if(tokens[1].equals(this.name))
+	 					this.playername2.setText(tokens[2]+": "+ score2);
+	 				else{
+	 					this.playername2.setText(tokens[1]+": "+ score2);
+	 					System.out.print(tokens[1]);
+	 				}
+	 				
 	 				
 	 			}
 	 			else if(serverData.startsWith("CIRCLES")){
 	 				String tokens[] = serverData.split(" "); //SPLIT BY SPACES
-	 				circles = new ArrayList<Circle>();
+	 				if(tokens[1].equals(this.name)){
+	 					circles = new ArrayList<Circle>();
+	 				
 	 				
 	 				System.out.print("circle");
 	 				for(int i =2 ;i< tokens.length; i++){
@@ -161,16 +196,59 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 					circles.add(cir);
 	 				}
 	 			
-	 				if(tokens[1].equals(this.name)){
+	 				//if(tokens[1].equals(this.name)){
 	 					
-		 				playerBoard1= new PlayerBoard(circles, true);
+		 				playerBoard1= new PlayerBoard(circles, true, this);
+		 				
 		 				cardLayoutPanel1.add(playerBoard1,"board1");
 		 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel1.getLayout());
 		 				cardLayout.show(cardLayoutPanel1, "board1");
 	 				}
+
+	 			}
+	 			else if(serverData.startsWith("CIRCLEUPDATE")){
+	 				String tokens[] = serverData.split(" ");
+	 				int i=1;
+	 				for(Circle circle: circles){
+	 					String token[] = tokens[i].split(",");
+	 					circle.y= Integer.parseInt(token[1]);
+	 					i++;
+	 				}
+	 				System.out.print("UPDATE");
+	 				
+	 			}
+	 			else if(serverData.startsWith("SCORE")){
+	 				String tokens[] = serverData.split(" ");
+	 				if(!tokens[1].equals(name)){
+	 					playername2.setText(tokens[1]+": "+ tokens[2]);
+	 				}
 	 				
 	 				
 	 			}
+	 			//receive when opponent pressed/released
+	 			else if(serverData.startsWith("KEY")){
+	 				String tokens[] = serverData.split(" ");
+	 				if(!tokens[1].equals(name)){
+	 					playerBoard2.updateOpponent(serverData);
+	 				}
+	 			}
+	 			else if(serverData.startsWith("WINNER")){
+	 				String tokens[] = serverData.split(" ");
+	 				
+	 				//System.out.print(serverData);
+	 				if(tokens[1].equals("1")){
+	 					System.out.printf("WINNER: "+ tokens[2]);
+	 					
+	 				}
+	 				else if(tokens[1].equals("2") ){
+	 					System.out.printf("TIE");
+	 					
+	 				}
+	 				
+	 				
+	 			}
+	 			
+	 			
 			}catch(Exception ioe){System.out.println("Error");}			
 		}
 	
@@ -181,6 +259,11 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
 	}
 	
+	public void updateScore(int score){
+		score1++;
+		playername1.setText(name+": "+score1);
+		send("SCORE "+name+" "+score1);
+	}
 	
 	public void send(String msg){
 		try{

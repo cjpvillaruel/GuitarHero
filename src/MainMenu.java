@@ -55,6 +55,7 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 		slotsAvailable.setForeground(Color.WHITE);
 		this.add(slotsAvailable);
 		this.server = server;
+		System.out.print(this.server);
 		t.start();
 		
 	
@@ -107,7 +108,7 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 	 			slotsAvailable.setText("Connected: "+ serverData);
 			}catch(Exception ioe){System.out.println("Error");}
 	
-			System.out.println("send");
+			//System.out.println("send "+ server);
 		}
 	}
 	public void send(String msg){

@@ -90,7 +90,7 @@ public class Game{
 			  
 			  num-= gaps[gap];
 		  }
-		 // System.out.println(count);  
+		  System.out.println("\n"+circles.get(circles.size()-1).y);  
 	}
 	
 	public String circlestoString(){

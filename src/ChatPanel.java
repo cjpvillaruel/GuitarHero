@@ -1,5 +1,6 @@
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -26,7 +27,9 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 	String name;
 	String serverData;
 	Thread t=new Thread(this);
+	GamePanel game;
 	public ChatPanel(GamePanel game) throws Exception{
+		this.game = game;
 		this.name = game.player1;
 		this.server = game.server;
 		this.setLayout(new FlowLayout());
@@ -41,6 +44,9 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 		
 		
 		chatField.setLineWrap( true );
+	
+		
+		this.setBackground(new Color(128, 4, 4));
 		chatbox.setText("");
 		scrollingArea2.setViewportView(chatField);
 		scrollingArea2.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
@@ -61,12 +67,15 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == sendButton){
-			System.out.println("send button");
+			
 			if(chatField.getText().trim() != ""){
 				String str = "MESSAGE>"+name+":";
 				str += chatField.getText().trim();
 				send(str);
 				chatField.setText("");
+				try{
+				game.playerBoard1.focus();
+				}catch(Exception exc){}
 			}	
 		}
 

@@ -24,11 +24,12 @@ public class GameServer implements Runnable, Constants{
 	int playerCount=0;
     DatagramSocket serverSocket = null;
 	Game game;
-
+	int highScore = 0;
 	int gameStage=WAITING_FOR_PLAYERS;
 	int numPlayers;
 	Thread t = new Thread(this);
-	int count;
+	int count, winnerScore=0;
+	String winner="";
 	public GameServer(){
 		this.numPlayers = 2;
 		try {
@@ -70,7 +71,7 @@ public class GameServer implements Runnable, Constants{
 		DatagramPacket packet;	
 		byte buf[] = msg.getBytes();		
 		packet = new DatagramPacket(buf, buf.length, player.getAddress(),player.getPort());
-		System.out.println(player.getPort());
+		
 		try{
 			serverSocket.send(packet);
 		}catch(IOException ioe){
@@ -82,7 +83,7 @@ public class GameServer implements Runnable, Constants{
 		DatagramPacket packet;	
 		byte buf[] = msg.getBytes();		
 		packet = new DatagramPacket(buf, buf.length, address,port);
-		System.out.print(address+" "+port);
+		//System.out.print(address+" "+port);
 		try{
 			serverSocket.send(packet);
 		}catch(IOException ioe){
@@ -115,21 +116,42 @@ public class GameServer implements Runnable, Constants{
 			//	System.out.println("Player Data:"+playerData);
 			//}
 			
-		
+			if(playerData.startsWith("MESSAGE")){
+				String tokens[] = playerData.split(">");
+				broadcast("CHATMESSAGE>"+tokens[1]);	
+			}
 			// process
 			switch(gameStage){
 				  case WAITING_FOR_PLAYERS:
 						//System.out.println("Game State: Waiting for players...");
 						if (playerData.startsWith("CONNECT")){
 							String tokens[] = playerData.split(" ");
-							NetPlayer player=new NetPlayer(packet.getAddress(),packet.getPort(),tokens[1]);
-							System.out.println("Player connected" +packet.getPort());
-							game.update(tokens[1].trim(),player);
-							broadcast("CONNECTED "+tokens[1]);
-							playerCount++;
-							if (playerCount==numPlayers){
-								gameStage=GAME_START;
-								broadcast("COMPLETE");
+							//check if duplicate name
+							boolean isFound=false;
+							for(Iterator ite=game.getPlayers().keySet().iterator();ite.hasNext();){
+								if(tokens[1].equals((String)ite.next())){
+									isFound= true;
+								}
+							}
+							
+							if(!isFound){
+								NetPlayer player=new NetPlayer(packet.getAddress(),packet.getPort(),tokens[1]);
+								System.out.println("Player connected" +packet.getPort());
+								game.update(tokens[1].trim(),player);
+								broadcast("CONNECTED "+tokens[1]);
+								playerCount++;
+								if (playerCount==numPlayers){
+									gameStage=GAME_START;
+									String str = "COMPLETE";
+									for(Iterator ite=game.getPlayers().keySet().iterator();ite.hasNext();){
+										String name=(String)ite.next();
+										str+=" "+ name;
+									}
+									broadcast(str);
+								}
+							}
+							else{
+								send(packet.getAddress(),packet.getPort(),"RENAME");
 							}
 						}
 						
@@ -144,10 +166,7 @@ public class GameServer implements Runnable, Constants{
 							
 							System.out.println("chat connect");
 						}
-						else if(playerData.startsWith("MESSAGE")){
-							String tokens[] = playerData.split(">");
-							broadcast("CHATMESSAGE>"+tokens[1]);	
-						}
+						
 						else if(playerData.startsWith("WAITING")){
 							broadcast("PLAYERCOUNT:"+numPlayers);	
 						}
@@ -162,10 +181,7 @@ public class GameServer implements Runnable, Constants{
 							broadcast("CHATNOTIF:"+tokens[1]+" connected.");
 							System.out.println("chat connect");
 						}
-					  else if(playerData.startsWith("MESSAGE")){
-							String tokens[] = playerData.split(">");
-							broadcast("CHATMESSAGE>"+tokens[1]);
-						}
+					 
 					  else if(playerData.startsWith("WAITING")){
 							broadcast("PLAYERCOUNT:"+numPlayers);	
 						}
@@ -184,25 +200,35 @@ public class GameServer implements Runnable, Constants{
 					
 					  break;
 				  case IN_PROGRESS:
-					  //System.out.println("Game State: IN_PROGRESS");
-					 
-					  //Player data was received!
-//					  if (playerData.startsWith("PLAYER")){
-//						  //Tokenize:
-//						  //The format: PLAYER <player name> <x> <y>
-//						  String[] playerInfo = playerData.split(" ");					  
-//						  String pname =playerInfo[1];
-//						  String msg = playerInfo[2];
-//						  //Get the player from the game state
-//						  NetPlayer player=(NetPlayer)game.getPlayers().get(pname);					  
-//						 
-//						  player.setMessage(msg);
-//						  //Update the game state
-//						  game.update(pname, player);
-//						  //Send to all the updated game state
-//						  broadcast(game.toString());
-//					  }
-					  break;
+					 // System.out.println("Game State: IN_PROGRESS");
+					  if(playerData.startsWith("SCORE")){
+						  String tokens[] = playerData.split(" ");
+						  broadcast(playerData);
+					  }
+					  if(playerData.startsWith("KEY")){
+						  broadcast(playerData);
+					  }
+					  
+					  else if(playerData.startsWith("PLAYERSCORE")){
+						  String tokens[] = playerData.split(" ");
+						  System.out.println(playerData);
+						  if(winner.equals("") ){
+							  winner =tokens[1];
+							  winnerScore = Integer.parseInt(tokens[2]);
+						  }
+						  else{
+							  
+							  if(winnerScore < Integer.parseInt(tokens[2])){
+								  broadcast("WINNER 1 "+ tokens[1] );
+								  System.out.print(winnerScore);
+							  }
+							  else if(winnerScore== Integer.parseInt(tokens[2]) ){
+								  broadcast("WINNER 2");
+							  }
+						  }
+					  }
+					  
+				break;
 			}				  
 		}
 	}	

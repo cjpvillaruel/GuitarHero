@@ -118,7 +118,6 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 					//increment score green
 					 if(isPlayer) 
 					 gamePanel.updateScore(20);
-					
 					 break;
 				 }
 			 }
@@ -157,10 +156,10 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 					case "F2": f2= true; break;
 					case "F3": f3= true; break;
 					case "F4": f4= true; break;
-					case "SPACE": space= true; break;
+					case "SPACE": space= true ;break;
 					
 				}
-				space = true;
+				
 			}
 			else if(tokens[2].equals("RELEASED")){
 				switch(tokens[3]){
@@ -170,7 +169,7 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 					case "F4": f4= false; break;
 					case "SPACE": space= false; break;
 				}
-				space = true;
+			
 			}
 		}
 	}
@@ -217,14 +216,17 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
         	 }
         	 else if(key == KeyEvent.VK_F2){
       		 	f2= false;
+      		 	space = false;
       		 	gamePanel.send("KEY "+gamePanel.name + " RELEASED "+ "F2");
          	 }
          	 else if(key == KeyEvent.VK_F3){
       		 	f3= false;
+      		 	space = false;
       		 	gamePanel.send("KEY "+gamePanel.name + " RELEASED "+ "F3");
          	 }
          	 else if(key == KeyEvent.VK_F4){
        		 	f4= false;
+       		 	space = false;
        		 	gamePanel.send("KEY "+gamePanel.name + " RELEASED "+ "F4");
           	 }
          	 else if(key == KeyEvent.VK_SPACE){
@@ -256,6 +258,7 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
         	 else if(key == KeyEvent.VK_SPACE){
         		 gamePanel.send("KEY "+gamePanel.name + " PRESSED "+ "SPACE");
         		 space= true;
+        		 
            	 }
         }
 

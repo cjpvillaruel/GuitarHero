@@ -74,7 +74,8 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		JPanel buttonPanel2 = new JPanel(new FlowLayout());
-		
+		buttonPanel.setBackground(Color.BLACK);
+		buttonPanel2.setBackground(Color.BLACK);
 		button = new JButton("Ready");
 		button.setEnabled(false);
 		button2 = new JButton("Ready");

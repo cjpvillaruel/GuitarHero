@@ -3,12 +3,16 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,11 +41,15 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 		chatbox = new JTextArea(2, 2);
 		this.socket = game.socket;
 		chatbox.setText("CHATBOX\n");
+		chatbox.setEditable(false);
 		chatbox.setLineWrap( true );
 		scrollingArea.setViewportView(chatbox);
 		scrollingArea.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 		scrollingArea.setPreferredSize(new Dimension(140,200));
+		Image imge = Toolkit.getDefaultToolkit().getImage( "images/sendbutton.png" );
+		sendButton.setIcon(new ImageIcon(imge));
 		
+		sendButton.setContentAreaFilled(false);
 		
 		chatField.setLineWrap( true );
 	
@@ -56,6 +64,7 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 		
 		this.add(scrollingArea);
 		this.add(scrollingArea2);
+		
 		this.add(sendButton);
 		send("CHATCONNECT "+name);
 		sendButton.addActionListener(this);

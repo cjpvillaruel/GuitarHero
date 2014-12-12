@@ -18,7 +18,7 @@ public class GuitarHeroGUI extends JFrame{
 	String server;
 	public GuitarHeroGUI(){
 		super("GuitarHero");
-		this.server = "192.168.1.101";
+		this.server = "192.168.1.100";
 		addComponents();
 		
 		// get screen dimensions using Toolkit and Dimension classes.
@@ -61,7 +61,7 @@ public class GuitarHeroGUI extends JFrame{
 		textBoxPanel.add(new JTextField(20));
 
 		try {
-			mainPanel = new MainMenu(panel1, server);
+			mainPanel = new MainMenu(panel1, server, this);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

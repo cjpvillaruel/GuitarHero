@@ -27,6 +27,7 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 	GamePanel gamePanel;
 	int incre=0;
 	ArrayList<Integer> circlesY;
+	ArrayList<Integer> lines;
 	public PlayerBoard(ArrayList<Circle> circles, boolean isPlayer1, GamePanel gamePanel){
 		this.circles = circles;
 		this.setBackground(Color.CYAN);
@@ -67,17 +68,17 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 		  g.setColor(new Color(9, 101, 254));
 		  g.fillOval(x,y,r1,r2);
 		}
+	public void addLines(ArrayList<Integer> lines){
+		this.lines = lines;
+	}
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
 		Graphics2D g2d = (Graphics2D)g;
 		//g.drawLine(x, y, x+50, y);
 		g.setColor(Color.BLACK);
-		if(y <= 330)
-		g.fillRect(x, y, width, height);
+		
 
-		//drawCenteredCircle(g2d, x, y, width,height);
-		//draw Circles
 		
 		 for (Circle circle : circles){
 			 if( circle.y >= 0 && circle.y <= 330){
@@ -179,7 +180,7 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
     	for (Circle circle : circles){
 			circle.y++;			
 		 }
-    	
+
     	y++;
     	
     	if(circles.get(circles.size()-1).y <= 335){

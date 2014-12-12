@@ -53,11 +53,15 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	public String serverData;
 	public JPanel cardLayoutPanel1;
 	public JPanel cardLayoutPanel2;
+	ArrayList <Integer> lines;
 	boolean waiting= true;
 	int score1=0, score2=0;
 	Thread t=new Thread(this);
+	AudioInputStream audioIn;
+     Clip clip;
 	boolean endGame= true;
-	public GamePanel(JPanel panel1, String server, String name, DatagramSocket socket) throws SocketException{
+	GuitarHeroGUI gui;
+	public GamePanel(JPanel panel1, String server, String name, DatagramSocket socket, GuitarHeroGUI gui) throws SocketException{
 		this.server = server;
 		this.panel1 = panel1;
 		this.setLayout(null);
@@ -134,6 +138,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		// TODO Auto-generated method stub
 		if( e.getSource() == button){
 			send("READY "+ this.name);
+			System.out.println("read");
 		}
 	}
 	@Override
@@ -172,10 +177,10 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				
 	 				try {
 	 			         // Open an audio input stream.
-	 			         File soundFile = new File("music/Avatar.wav");
-	 					AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+	 			         File soundFile = new File("music/cannon-rock.wav");
+	 			         audioIn = AudioSystem.getAudioInputStream(soundFile);
 	 			         // Get a sound clip resource.
-	 			         Clip clip = AudioSystem.getClip();
+	 			         clip = AudioSystem.getClip();
 	 			         // Open audio clip and load samples from the audio input stream.
 	 			         clip.open(audioIn);
 	 			         clip.loop(1);
@@ -187,6 +192,8 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 			      } catch (LineUnavailableException e) {
 	 			         e.printStackTrace();
 	 			      }
+	 				playerBoard1.addLines(lines);
+	 				playerBoard2.addLines(lines);
 	 				//start game
 	 				playerBoard1.startGame();
 	 				playerBoard2.startGame();
@@ -234,6 +241,17 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				}
 
 	 			}
+	 			else if(serverData.startsWith("LINES")){
+	 				
+	 				String tokens[] = serverData.split(" ");
+	 				if(tokens[1].equals(this.name)){
+		 				lines = new ArrayList<Integer>();
+	 					for(int i =2 ;i< tokens.length; i++){
+		 					lines.add(Integer.parseInt(tokens[i]));
+		 				}
+	 				}
+	 				//System.out.print(serverData);
+	 			}
 	 			else if(serverData.startsWith("CIRCLEUPDATE")){
 	 				String tokens[] = serverData.split(" ");
 	 				int i=1;
@@ -263,18 +281,37 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 			else if(serverData.startsWith("WINNER")){
 	 				String tokens[] = serverData.split(" ");
 	 				
-	 				
+	 				clip.stop();
 	 				if(tokens[1].equals("1")){
 	 					String winnerName =  tokens[2]+" wins! Play Again?";
 	 					JLabel winner = new JLabel( tokens[2]+" wins! Play Again?");
 	 					JPanel panel = new JPanel(new GridLayout(2,2));
 	 					
-	 					JOptionPane.showConfirmDialog(null, winnerName, "Play Again", JOptionPane.YES_NO_OPTION);
-	 					
+	 					int a = JOptionPane.showConfirmDialog(null, winnerName, "Play Again", JOptionPane.YES_NO_OPTION);
+	 					System.out.print("ans "+ a);
+	 					if(a == 0){
+	 						this.reset();
+	 						send("CONNECT "+this.name);
+	 						System.out.println("playagain");
+	 					}
+	 					else if(a ==1){
+	 						JOptionPane.showMessageDialog(null, "Thank you for playing!", "Bye", JOptionPane.ERROR_MESSAGE);
+	 						gui.dispose();
+	 					}
+	 						
 	 				}
 	 				else if(tokens[1].equals("2") ){
-	 					System.out.printf("TIE");
 	 					
+	 					int a = JOptionPane.showConfirmDialog(null, "DRAW! Play again?", "Play Again", JOptionPane.YES_NO_OPTION);
+	 					if(a == 0){
+	 						this.reset();
+	 						send("CONNECT "+this.name);
+	 						System.out.println("playagain");
+	 					}
+	 					else if(a ==1){
+	 						JOptionPane.showMessageDialog(null, "Thank you for playing!", "Bye", JOptionPane.ERROR_MESSAGE);
+	 						gui.dispose();
+	 					}
 	 				}
 	
 	 			}
@@ -285,6 +322,19 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	
 	}
 
+	public void reset(){
+		CardLayout cardLayout = (CardLayout)(cardLayoutPanel1.getLayout());
+		cardLayout.show(cardLayoutPanel1, "Player1");
+		cardLayout.removeLayoutComponent(playerBoard1);
+		cardLayout = (CardLayout)(cardLayoutPanel2.getLayout());
+		cardLayout.show(cardLayoutPanel2, "Player2");
+		cardLayout.removeLayoutComponent(playerBoard2);
+		score1= 0;
+		score2 = 0;
+		playername1.setText(this.name+": 0");
+		playername2.setText("Waiting..");
+		
+	}
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(background, 0, 0, getWidth(), getHeight(), this);

@@ -19,6 +19,7 @@ public class Game{
 	 */
 	private Map players=new HashMap();
 	ArrayList<Circle> circles;
+	ArrayList<Integer> lines;
 	
 	/**
 	 * Simple constructor
@@ -37,6 +38,10 @@ public class Game{
 		players.put(name,player);
 	}
 	
+	public void reset(){
+		players.clear();
+		initializeCircles();
+	}
 	/**
 	 * String representation of this object. Used for data transfer
 	 * over the network
@@ -61,6 +66,8 @@ public class Game{
 	
 	public void initializeCircles(){
 		  this.circles = new ArrayList<Circle>();
+		  this.lines = new ArrayList<Integer>();
+		  int yline = -50;
 		  Random randomGenerator = new Random();
 		  int[] gaps = {90, 100, 150,200, 400};
 		  int gap = randomGenerator.nextInt(5);
@@ -69,6 +76,7 @@ public class Game{
 		  int color, color2;
 		  int count=0;
 		  while(num >= -5000){
+			  lines.add(yline);
 			  color = randomGenerator.nextInt(4);
 			  circle = new Circle(color);
 			  circle.y = num;
@@ -87,7 +95,7 @@ public class Game{
 				  circles.add(circle);
 				  count++;
 			  }
-			  
+			  yline-=gaps[gap];
 			  num-= gaps[gap];
 		  }
 		  System.out.println("\n"+circles.get(circles.size()-1).y);  
@@ -97,6 +105,14 @@ public class Game{
 		String str = "";
 		for (Circle circle : circles){
 			str+= " "+circle.colornum +","+circle.y;
+				
+		 }
+		return str;
+	}
+	public String linestoString(){
+		String str = "";
+		for (Integer line : lines){
+			str+= " "+line;
 				
 		 }
 		return str;

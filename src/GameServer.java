@@ -190,10 +190,12 @@ public class GameServer implements Runnable, Constants{
 							broadcast("PLAYERCOUNT:"+numPlayers);
 							//CIRCLE NAME 1,2 3,4 
 							broadcast("CIRCLES " +tokens[1]+ game.circlestoString()); 
+							broadcast("LINES " +tokens[1]+ game.linestoString()); 
 							count++;
 							if(count ==2){
 								broadcast("READY");
 								gameStage=IN_PROGRESS;
+								
 							}
 					   }
 					 
@@ -228,6 +230,11 @@ public class GameServer implements Runnable, Constants{
 							  else if(winnerScore== Integer.parseInt(tokens[2]) ){
 								  broadcast("WINNER 2");
 							  }
+							  game.reset();
+							  playerCount=0;
+							  count=0;
+							  winnerScore=0;
+							  gameStage= WAITING_FOR_PLAYERS;
 						  }
 					  }
 					  

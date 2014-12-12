@@ -29,8 +29,10 @@ public class NamePanel extends JPanel implements ActionListener,Constants {
 	String server="localhost";
 	String serverData;
 	Image background;
+	GuitarHeroGUI gui;
 	
-	public NamePanel(JPanel panel1, String server) throws Exception{
+	public NamePanel(JPanel panel1, String server, GuitarHeroGUI gui) throws Exception{
+		this.gui = gui;
 		nameLabel= new JLabel("Enter your name:");
 		status= new JLabel();
 		askName = new JPanel(new FlowLayout());
@@ -79,7 +81,7 @@ public class NamePanel extends JPanel implements ActionListener,Constants {
 		 			serverData=serverData.trim();
 				
 		 			if(serverData.startsWith("CONNECTED")){
-		 				game= new GamePanel(this.panel1, this.server,name.getText(), this.socket);
+		 				game= new GamePanel(this.panel1, this.server,name.getText(), this.socket, gui);
 		 				panel1.add(game, "Game");
 		 				CardLayout cardLayout = (CardLayout)(panel1.getLayout());
 		 				cardLayout.show(panel1, "Game");	

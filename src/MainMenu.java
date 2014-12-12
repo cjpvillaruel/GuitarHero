@@ -29,15 +29,17 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 	String server="localhost";
 	JLabel slotsAvailable;
 	boolean stillMain= true;
-	
+	AboutPanel aboutPanel;
 	Thread t=new Thread(this);
 	String player="Joseph";
 	String pname;
 	boolean connected=false;
     DatagramSocket socket = new DatagramSocket();
 	String serverData;
+	GuitarHeroGUI gui;
 	
-	public MainMenu(JPanel panel1, String server) throws Exception{
+	public MainMenu(JPanel panel1, String server, GuitarHeroGUI gui) throws Exception{
+		this.gui = gui;
 		this.setLayout(null);
 		background = Toolkit.getDefaultToolkit().getImage( "images/background1.jpg" );
 		this.panel1 = panel1;
@@ -83,7 +85,7 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 			
 			
 			try {
-				askName= new NamePanel(panel1, this.server);
+				askName= new NamePanel(panel1, this.server, gui);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -92,6 +94,17 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 			CardLayout cardLayout = (CardLayout)(panel1.getLayout());
 			cardLayout.show(panel1, "Name");
 			this.stillMain = false;
+			
+			
+		}
+		if(e.getSource() == about){
+		
+			
+			aboutPanel = new AboutPanel(panel1);
+			panel1.add(aboutPanel, "About");
+			CardLayout cardLayout = (CardLayout)(panel1.getLayout());
+			cardLayout.show(panel1, "About");
+			
 			
 			
 		}
@@ -127,7 +140,7 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 		}
 	}
 	public void send(String msg){
-		try{
+		try{	
 			byte[] buf = msg.getBytes();
         	InetAddress address = InetAddress.getByName(server);
         	DatagramPacket packet = new DatagramPacket(buf, buf.length, address, PORT);

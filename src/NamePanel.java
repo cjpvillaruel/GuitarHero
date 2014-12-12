@@ -1,6 +1,9 @@
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.DatagramPacket;
@@ -25,27 +28,37 @@ public class NamePanel extends JPanel implements ActionListener,Constants {
     DatagramSocket socket = new DatagramSocket();
 	String server="localhost";
 	String serverData;
-	
+	Image background;
 	
 	public NamePanel(JPanel panel1, String server) throws Exception{
 		nameLabel= new JLabel("Enter your name:");
-		status= new JLabel("status");
+		status= new JLabel();
 		askName = new JPanel(new FlowLayout());
+		this.setLayout(null);
+		background = Toolkit.getDefaultToolkit().getImage( "images/background2.jpg" );
 		name = new JTextField(10);
 		port = new JTextField(10);
-		//name.setBounds(0, 0,100, 50);
+		name.setBounds(550, 290, 200,30);
+		status.setBounds(550, 320, 200,30);
 		nameLabel.setForeground(Color.white);
 		status.setForeground(Color.white);
 		next = new JButton("Next");
+		next.setBounds(550, 390, 200,40);
+	//	next.setBackground(new Color(205, 174, 4));
+		//next.setForeground(Color.white);
 		next.addActionListener(this);
-		this.add(nameLabel);
+	
 		this.add(name);
 		this.add(next);
 		this.add(status);
-		this.setBackground(new Color(128, 4, 4));
+		//this.setBackground(new Color(128, 4, 4));
 		this.panel1 = panel1;
 		this.server = server;
 		
+	}
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

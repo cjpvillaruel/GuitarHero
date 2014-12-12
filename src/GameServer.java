@@ -222,6 +222,9 @@ public class GameServer implements Runnable, Constants{
 								  broadcast("WINNER 1 "+ tokens[1] );
 								  System.out.print(winnerScore);
 							  }
+							  else if(winnerScore > Integer.parseInt(tokens[2])){
+								  broadcast("WINNER 1 "+ winner );
+							  }
 							  else if(winnerScore== Integer.parseInt(tokens[2]) ){
 								  broadcast("WINNER 2");
 							  }

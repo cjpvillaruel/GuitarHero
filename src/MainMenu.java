@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 public class MainMenu extends JPanel implements ActionListener, Runnable, Constants {
 	GamePanel game;
 	Image background;
-	JButton play,next;
+	JButton play,next,about,help;
 	JPanel panel1;
 	JLabel nameLabel;
 	JPanel askName;
@@ -50,6 +50,21 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 		play.setBounds(520, 220, 260, 110);
 		play.addActionListener(this);
 		this.add(play);
+		about = new JButton();	
+		//about.setBorderPainted(false); 
+		//about.setFocusPainted(false);  
+		about.setContentAreaFilled(false);  
+		about.setBounds(540, 410, 220, 70);
+		about.addActionListener(this);
+		this.add(about);
+		
+		help = new JButton();	
+		//help.setBorderPainted(false); 
+		//help.setFocusPainted(false);  
+		help.setContentAreaFilled(false);  
+		help.setBounds(540, 340, 220, 70);
+		help.addActionListener(this);
+		this.add(help);
 		slotsAvailable = new JLabel("Available:");
 		slotsAvailable.setBounds(100, 400, 200, 200);
 		slotsAvailable.setForeground(Color.WHITE);

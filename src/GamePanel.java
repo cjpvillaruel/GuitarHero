@@ -4,12 +4,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -18,8 +20,14 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -74,8 +82,8 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		JPanel buttonPanel2 = new JPanel(new FlowLayout());
-		buttonPanel.setBackground(Color.BLACK);
-		buttonPanel2.setBackground(Color.BLACK);
+		buttonPanel.setBackground(new Color(32,33,30));
+		buttonPanel2.setBackground(new Color(32,33,30));
 		button = new JButton("Ready");
 		button.setEnabled(false);
 		button2 = new JButton("Ready");
@@ -112,6 +120,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		this.playername2.setForeground(Color.white);
 		this.add(playername1);
 		this.add(playername2);
+		
 		
 		
 		//this.add(status);
@@ -160,6 +169,24 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				//show playerboard2
 	 				CardLayout cardLayout = (CardLayout)(cardLayoutPanel2.getLayout());
 	 				cardLayout.show(cardLayoutPanel2, "board2");
+	 				
+	 				try {
+	 			         // Open an audio input stream.
+	 			         File soundFile = new File("music/Avatar.wav");
+	 					AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+	 			         // Get a sound clip resource.
+	 			         Clip clip = AudioSystem.getClip();
+	 			         // Open audio clip and load samples from the audio input stream.
+	 			         clip.open(audioIn);
+	 			         clip.loop(1);
+	 			         
+	 			      } catch (UnsupportedAudioFileException e) {
+	 			          e.printStackTrace();
+	 			      } catch (IOException e) {
+	 			         e.printStackTrace();
+	 			      } catch (LineUnavailableException e) {
+	 			         e.printStackTrace();
+	 			      }
 	 				//start game
 	 				playerBoard1.startGame();
 	 				playerBoard2.startGame();
@@ -236,17 +263,20 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 			else if(serverData.startsWith("WINNER")){
 	 				String tokens[] = serverData.split(" ");
 	 				
-	 				//System.out.print(serverData);
+	 				
 	 				if(tokens[1].equals("1")){
-	 					System.out.printf("WINNER: "+ tokens[2]);
+	 					String winnerName =  tokens[2]+" wins! Play Again?";
+	 					JLabel winner = new JLabel( tokens[2]+" wins! Play Again?");
+	 					JPanel panel = new JPanel(new GridLayout(2,2));
+	 					
+	 					JOptionPane.showConfirmDialog(null, winnerName, "Play Again", JOptionPane.YES_NO_OPTION);
 	 					
 	 				}
 	 				else if(tokens[1].equals("2") ){
 	 					System.out.printf("TIE");
 	 					
 	 				}
-	 				
-	 				
+	
 	 			}
 	 			
 	 			

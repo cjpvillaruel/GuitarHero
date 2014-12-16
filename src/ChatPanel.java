@@ -46,7 +46,8 @@ public class ChatPanel extends JPanel implements Runnable, ActionListener, Const
 		scrollingArea.setViewportView(chatbox);
 		scrollingArea.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 		scrollingArea.setPreferredSize(new Dimension(140,200));
-		Image imge = Toolkit.getDefaultToolkit().getImage( "images/sendbutton.png" );
+		java.net.URL imgURL = getClass().getResource("images/sendbutton.png");
+		Image imge = Toolkit.getDefaultToolkit().getImage( imgURL );
 		sendButton.setIcon(new ImageIcon(imge));
 		
 		sendButton.setContentAreaFilled(false);

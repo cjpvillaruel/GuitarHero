@@ -15,7 +15,8 @@ public class AboutPanel extends JPanel implements ActionListener {
 	JButton back;
 	JPanel panel1;
 	public AboutPanel(JPanel panel1){
-		background = Toolkit.getDefaultToolkit().getImage( "images/about.jpg" );
+		java.net.URL imgURL = getClass().getResource( "images/about.jpg");
+		background = Toolkit.getDefaultToolkit().getImage(imgURL );
 		back = new JButton("Back");
 		this.add(back);
 		back.addActionListener(this);

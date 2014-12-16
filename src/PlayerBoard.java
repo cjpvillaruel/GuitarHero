@@ -25,20 +25,25 @@ public class PlayerBoard extends JPanel implements Constants, ActionListener {
 	ArrayList <Circle> circles;
 	boolean isPlayer;
 	GamePanel gamePanel;
-	int incre=0;
+	
 	ArrayList<Integer> circlesY;
 	ArrayList<Integer> lines;
 	public PlayerBoard(ArrayList<Circle> circles, boolean isPlayer1, GamePanel gamePanel){
 		this.circles = circles;
 		this.setBackground(Color.CYAN);
-		background = Toolkit.getDefaultToolkit().getImage( "images/playerboard1.jpg" );
-		pink =  Toolkit.getDefaultToolkit().getImage( "images/pink.png" );
-		green =  Toolkit.getDefaultToolkit().getImage( "images/green.png" );
-		violet =  Toolkit.getDefaultToolkit().getImage( "images/violet.png" );
-		blue =  Toolkit.getDefaultToolkit().getImage( "images/blue.png" );
+		java.net.URL imgURL = getClass().getResource("images/playerboard1.jpg");
+		background = Toolkit.getDefaultToolkit().getImage( imgURL );
+		imgURL = getClass().getResource("images/pink.png");
+		pink =  Toolkit.getDefaultToolkit().getImage( imgURL );
+		imgURL = getClass().getResource("images/green.png");
+		green =  Toolkit.getDefaultToolkit().getImage( imgURL );
+		imgURL = getClass().getResource("images/violet.png");
+		violet =  Toolkit.getDefaultToolkit().getImage(imgURL );
+		imgURL = getClass().getResource("images/blue.png");
+		blue =  Toolkit.getDefaultToolkit().getImage( imgURL );
 		this.setDoubleBuffered( true );
 		 this.timer = new Timer( 5, this );
-		 incre= 0;
+		
 		 this.isPlayer = isPlayer1;
 		 this.gamePanel = gamePanel;
 		 

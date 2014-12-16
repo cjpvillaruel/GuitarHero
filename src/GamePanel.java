@@ -128,7 +128,8 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		
 		
 		//this.add(status);
-		background = Toolkit.getDefaultToolkit().getImage( "images/gameLayout.jpg" );
+		java.net.URL imgURL = getClass().getResource("images/gameLayout.jpg");
+		background = Toolkit.getDefaultToolkit().getImage( imgURL);
 	}
 	public void sendWinner(){
 		send("PLAYERSCORE "+name+" "+score1);
@@ -177,6 +178,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 				
 	 				try {
 	 			         // Open an audio input stream.
+	 					
 	 			         File soundFile = new File("music/cannon-rock.wav");
 	 			         audioIn = AudioSystem.getAudioInputStream(soundFile);
 	 			         // Get a sound clip resource.
@@ -295,7 +297,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 						System.out.println("playagain");
 	 					}
 	 					else if(a ==1){
-	 						JOptionPane.showMessageDialog(null, "Thank you for playing!", "Bye", JOptionPane.ERROR_MESSAGE);
+	 						//JOptionPane.showMessageDialog(null, "Thank you for playing!", "Bye", JOptionPane.ERROR_MESSAGE);
 	 						gui.dispose();
 	 					}
 	 						
@@ -309,8 +311,9 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 	 						System.out.println("playagain");
 	 					}
 	 					else if(a ==1){
-	 						JOptionPane.showMessageDialog(null, "Thank you for playing!", "Bye", JOptionPane.ERROR_MESSAGE);
 	 						gui.dispose();
+	 						//JOptionPane.showMessageDialog(null, "Thank you for playing!", "Bye", JOptionPane.PLAIN_MESSAGE);
+	 					
 	 					}
 	 				}
 	
@@ -328,7 +331,7 @@ public class GamePanel extends JPanel implements ActionListener , Runnable, Cons
 		cardLayout.removeLayoutComponent(playerBoard1);
 		cardLayout = (CardLayout)(cardLayoutPanel2.getLayout());
 		cardLayout.show(cardLayoutPanel2, "Player2");
-		cardLayout.removeLayoutComponent(playerBoard2);
+		//cardLayout.removeLayoutComponent(playerBoard2);
 		score1= 0;
 		score2 = 0;
 		playername1.setText(this.name+": 0");

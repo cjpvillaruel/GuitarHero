@@ -234,6 +234,7 @@ public class GameServer implements Runnable, Constants{
 							  playerCount=0;
 							  count=0;
 							  winnerScore=0;
+							  winner= "";
 							  gameStage= WAITING_FOR_PLAYERS;
 						  }
 					  }
@@ -243,9 +244,7 @@ public class GameServer implements Runnable, Constants{
 		}
 	}	
 	
-	
-	public static void main(String args[]){
-		
+	public static void main(String args[]){	
 		new GameServer();
 	}
 }

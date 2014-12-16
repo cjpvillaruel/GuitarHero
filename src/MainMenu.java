@@ -36,14 +36,17 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 	boolean connected=false;
     DatagramSocket socket = new DatagramSocket();
 	String serverData;
+	HelpPanel helpPanel;
 	GuitarHeroGUI gui;
 	
 	public MainMenu(JPanel panel1, String server, GuitarHeroGUI gui) throws Exception{
 		this.gui = gui;
 		this.setLayout(null);
-		background = Toolkit.getDefaultToolkit().getImage( "images/background1.jpg" );
+		java.net.URL imgURL = getClass().getResource("images/background1.jpg");
+		background = Toolkit.getDefaultToolkit().getImage(imgURL  );
 		this.panel1 = panel1;
-		Image imge = Toolkit.getDefaultToolkit().getImage( "images/playbutton.jpg" );
+		java.net.URL imgURL1 = getClass().getResource("images/playbutton.jpg");
+		Image imge = Toolkit.getDefaultToolkit().getImage( imgURL1 );
 		play = new JButton("Play");	
 		play.setIcon(new ImageIcon(imge));
 		play.setBorderPainted(false); 
@@ -105,7 +108,17 @@ public class MainMenu extends JPanel implements ActionListener, Runnable, Consta
 			CardLayout cardLayout = (CardLayout)(panel1.getLayout());
 			cardLayout.show(panel1, "About");
 			
-			
+		}
+		if(e.getSource() == help){	
+			try {
+				helpPanel = new HelpPanel(panel1);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			panel1.add(helpPanel, "Help");
+			CardLayout cardLayout = (CardLayout)(panel1.getLayout());
+			cardLayout.show(panel1, "Help");
 			
 		}
 		

@@ -37,7 +37,8 @@ public class NamePanel extends JPanel implements ActionListener,Constants {
 		status= new JLabel();
 		askName = new JPanel(new FlowLayout());
 		this.setLayout(null);
-		background = Toolkit.getDefaultToolkit().getImage( "images/background2.jpg" );
+		java.net.URL imgURL = getClass().getResource("images/background2.jpg");
+		background = Toolkit.getDefaultToolkit().getImage( imgURL);
 		name = new JTextField(10);
 		port = new JTextField(10);
 		name.setBounds(550, 290, 200,30);

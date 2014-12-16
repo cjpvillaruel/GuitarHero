@@ -16,11 +16,11 @@ public class GuitarHeroGUI extends JFrame{
 	public JPanel panel1, panel2,panel3, buttonPanel,textBoxPanel;
 	public MainMenu mainPanel;
 	String server;
-	public GuitarHeroGUI(){
+	public GuitarHeroGUI(String server){
 		super("GuitarHero");
-		this.server = "192.168.1.100";
+		this.server = server;
 		addComponents();
-		
+		//"192.168.1.100"
 		// get screen dimensions using Toolkit and Dimension classes.
 		Toolkit kit = Toolkit.getDefaultToolkit(); 
 		Dimension screenSize = kit.getScreenSize(); 

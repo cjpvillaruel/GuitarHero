@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * The main game server. It just accepts the messages sent by one player to
  * another player
- * @author Joseph Anthony C. Hermocilla
+ * reference:  Joseph Anthony C. Hermocilla
  *
  */
 
